@@ -3,6 +3,9 @@
 echo "Remove all kong related containers and their volumes..."
 ./delete_containers.sh
 
+##echo "Stop all kong related containers......................."
+##./stop_containers.sh
+
 echo "Install Postgres......................................."
 ./install_postgres.sh
 
