@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ##  Once the database has been started and prepared, 
 ## we can start a Kong container and link it to the database container, 
 ## and configuring the KONG_DATABASE environment variable with 
@@ -22,5 +24,4 @@
     -p 8444:8444 \
     kong:latest
 
-docker ps -a
 

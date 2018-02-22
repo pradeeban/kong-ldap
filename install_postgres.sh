@@ -1,6 +1,6 @@
-## Start a PostgreSQL container by executing:
+#!/bin/bash
 
-set -x
+## Start a PostgreSQL container by executing:
 
 docker run -d --name kong-database \
               -p 5432:5432 \
@@ -8,4 +8,4 @@ docker run -d --name kong-database \
               -e "POSTGRES_DB=kong" \
               postgres:9.5
 
-docker ps |grep kong-database
+
