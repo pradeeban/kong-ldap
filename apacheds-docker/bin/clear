@@ -1,0 +1,15 @@
+#!/bin/bash
+
+LDAPHOST=${LDAPHOST:-localhost}
+LDAPPORT=${LDAPPORT:-10389}
+LDAPPASS=${LDAPPASS:-secret}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
+
+
+read -p "This will clear the $LDAPDOMAIN LDAP tree. Are you sure? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    ldapdelete -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -D uid=admin,ou=system -x -r ou=Groups,$LDAPDOMAIN
+    ldapdelete -v -h $LDAPHOST -p $LDAPPORT -w $LDAPPASS -D uid=admin,ou=system -x -r ou=Users,$LDAPDOMAIN
+fi

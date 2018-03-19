@@ -1,0 +1,83 @@
+#!/bin/bash
+
+LDAPHOST=${LDAPHOST:-localhost}
+LDAPPORT=${LDAPPORT:-10389}
+LDAPPASS=${LDAPPASS:-secret}
+GROUP=${GROUP:-ldap-private}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
+
+
+LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
+LDAPMODIFY="ldapmodify -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
+
+USER=$1
+shift
+USERDN="uid=$USER,ou=Users,$LDAPDOMAIN"
+
+if  [ $1 = "add" ]; then
+    $LDAPADD << EOF
+version: 1
+
+dn: $USERDN
+objectClass: organizationalPerson
+objectClass: person
+objectClass: extensibleObject
+objectClass: uidObject
+objectClass: inetOrgPerson
+objectClass: top
+cn: $USER
+givenName: $USER
+sn: $USER
+uid: $USER
+mail: $USER@openmicroscopy.org
+ou: Users
+userpassword: ome
+EOF
+elif [ $1 = "in" ]; then
+    shift
+    GROUP=$1
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+
+    $LDAPMODIFY << EOF
+dn: $GROUPDN
+changetype: modify
+add: uniqueMember
+uniqueMember: $USERDN
+EOF
+elif [ $1 = "out" ]; then
+    shift
+    GROUP=$1
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+
+    $LDAPMODIFY << EOF
+dn: $GROUPDN
+changetype: modify
+delete: uniqueMember
+uniqueMember: $USERDN
+EOF
+elif [ $1 = "owner" ]; then
+    shift
+    GROUP=$1
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+
+$LDAPMODIFY << EOF
+dn: $GROUPDN
+changetype: modify
+add: owner
+owner: $USERDN
+EOF
+elif [ $1 = "member" ]; then
+    shift
+    GROUP=$1
+    GROUPDN="cn=$GROUP,ou=Groups,$LDAPDOMAIN"
+
+    $LDAPMODIFY << EOF
+dn: $GROUPDN
+changetype: modify
+delete: owner
+owner: $USERDN
+EOF
+else
+    echo "huh?"
+    exit 2
+fi

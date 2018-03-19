@@ -1,0 +1,336 @@
+#!/usr/bin/env python
+
+import argparse
+import ldap
+import ldap.modlist
+import ldif
+import sys
+
+
+DESCRIPTION = """opinionated-creation of users & groups for OMERO
+
+Example
+-------
+    ./ldapmanager init
+    ./ldapmanager user u1
+    ./ldapmanager user u2
+    ./ldapmanager user u3
+    ./ldapmanager group g1 --member u1 --owner u2 --owner -u3
+    ./ldapmanager member g1 u1 --remove
+    ./ldapmanager owner g1 u2 --remove
+    ./ldapmanager member g1 u2 --remove
+    ./ldapmanager get uid=u2,ou=Users,dc=openmicroscopy,dc=org
+    ./ldapmanager clear
+
+"""
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=DESCRIPTION,
+        formatter_class=argparse.RawTextHelpFormatter)
+    subparsers = parser.add_subparsers()
+
+    # Connection settings #####################################################
+    do_or_do_not = parser.add_mutually_exclusive_group()
+    do_or_do_not.add_argument("--apply", "-f",
+                              action="store_true", default=True)
+    do_or_do_not.add_argument("--dry-run", "-n", default=True,
+                              action="store_false", dest="apply")
+    parser.add_argument("--url", default="ldap://127.0.0.1:10389")
+    parser.add_argument("--base", default=None, help="Uses 'host' if undefined")
+    parser.add_argument("--host", default="openmicroscopy.org")
+    parser.add_argument("--bind-user", default="uid=admin,ou=system")
+    parser.add_argument("--bind-pass", default="secret")
+    parser.add_argument("--debug", action="store_true")
+
+    # Get #####################################################################
+    get = subparsers.add_parser("get")
+    get.set_defaults(func=_get)
+    get.add_argument("dn")
+
+    # Search ##################################################################
+    search = subparsers.add_parser("search")
+    search.set_defaults(func=_search)
+    search.add_argument("query", nargs="?", default="(objectClass=*)")
+
+    # Init ####################################################################
+    init = subparsers.add_parser("init")
+    init.set_defaults(func=_init)
+
+    # User ####################################################################
+    user = subparsers.add_parser("user")
+    user.set_defaults(func=_user)
+    user.add_argument("login", metavar="USER")
+    user.add_argument("--password", default=[], action="append")
+    user.add_argument("--first", default="J.")
+    user.add_argument("--last", default="Doe")
+    user.add_argument("--dn", default=None, help=(
+        "If no DN is set, login and base will be used"))
+    user.add_argument("--mail", default=None, help=(
+        "If no mail address is iset, login and base will be used"))
+
+    # Group ###################################################################
+    group = subparsers.add_parser("group")
+    group.set_defaults(func=_group)
+    group.add_argument("login", metavar="GROUP")
+    group.add_argument("--member", default=[], action="append")
+    group.add_argument("--owner", default=[], action="append")
+
+    # Member ##################################################################
+    member = subparsers.add_parser("member")
+    member.set_defaults(func=_member)
+    member.add_argument("login", metavar="GROUP")
+    member.add_argument("member", nargs="+", metavar="MEMBER")
+    group = member.add_mutually_exclusive_group()
+    group.add_argument("--add", action="store_true", default=True)
+    group.add_argument("--remove", action="store_false",
+                       dest="add", default=True)
+
+    # Owner ##################################################################
+    owner = subparsers.add_parser("owner")
+    owner.set_defaults(func=_owner)
+    owner.add_argument("login", metavar="GROUP")
+    owner.add_argument("owner", nargs="+", metavar="OWNER")
+    group = owner.add_mutually_exclusive_group()
+    group.add_argument("--add", action="store_true", default=True)
+    group.add_argument("--remove", action="store_false",
+                       dest="add", default=True)
+
+    # Clear ##################################################################
+    clear = subparsers.add_parser("clear")
+    clear.set_defaults(func=_clear)
+    clear.add_argument("dn", nargs="*",
+                       help="Defaults to 'Users' and 'Groups'",
+                       default=(
+                           "ou=Groups,dc=openmicroscopy,dc=org",
+                           "ou=Users,dc=openmicroscopy,dc=org",
+                       ))
+
+    # Run #####################################################################
+    ns = parser.parse_args()
+    ns.func(ns)
+
+#
+# HELPERS
+#
+
+
+def connection(ns):
+    conn = ldap.initialize(ns.url)
+    conn.simple_bind_s(ns.bind_user, ns.bind_pass)
+    return conn
+
+
+def cleanup(ns, ou="Users"):
+    """
+    Massage the argparse namespace for better defaults
+    """
+    login = getattr(ns, "login", None)
+
+    if not ns.base:
+        ns.base = ",".join(["dc=%s" % x for x in ns.host.split(".")])
+    if not getattr(ns, "mail", None):
+        ns.mail = "%s@%s" % (login, ns.host)
+    if not getattr(ns, "dn", None):
+        ns.dn = dn(ns, login, ou)
+
+
+def dn(ns, login, ou="Users"):
+    id = "uid"
+    if ou != "Users":
+        id = "cn"
+    return "%s=%s,ou=%s,%s" % (id, login, ou, ns.base)
+
+
+def dn_user(ns, login):
+    return dn(ns, login)
+
+
+def dn_group(ns, login):
+    return dn(ns, login, ou="Groups")
+
+
+def get_by_dn(conn, dn):
+    return conn.search_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')
+
+
+def process(ns, dn, modlist, action="add"):
+
+    # if "modify", assume list is already created
+    if action == "add":
+        modlist = ldap.modlist.addModlist(modlist)
+
+    if ns.debug:
+        for i, x in enumerate(modlist):
+            print i, x
+    if ns.apply:
+        conn = connection(ns)
+        try:
+            try:
+                if action == "add":
+                    result = conn.add_s(dn, modlist)
+                elif action == "modify":
+                    result = conn.modify_s(dn, modlist)
+                elif action == "delete":
+                    result = conn.delete_s(dn, modlist)
+                show_results(get_by_dn(conn, dn))
+                if ns.debug:
+                    print >>sys.stderr, result
+            except ldap.LDAPError, le:
+                print le.args[0].get("info", "No info")
+                print le.args[0].get("desc", "No description")
+                sys.exit(1)
+        finally:
+            conn.unbind()
+    else:
+        writer = ldif.LDIFWriter(sys.stdout)
+        writer.unparse(dn, modlist)
+
+
+def show_results(results):
+    for i, result in enumerate(results):
+        print "# {%s}" % i
+        print "dn:", result[0]
+        for k, vs in sorted(result[1].items()):
+            for v in vs:
+                print "%s: %s" % (k, v)
+
+#
+# COMMANDS
+#
+
+
+def _get(ns):
+    cleanup(ns)
+    conn = connection(ns)
+    try:
+        show_results(get_by_dn(conn, ns.dn))
+    finally:
+        conn.unbind()
+
+
+def _search(ns):
+    cleanup(ns)
+    conn = connection(ns)
+    try:
+        show_results(
+            conn.search_s(ns.base, ldap.SCOPE_SUBTREE, ns.query))
+    finally:
+        conn.unbind()
+
+
+def _init(ns):
+    cleanup(ns)
+
+    actions = [
+        ("ou=Users,%s" % ns.base, {
+            "objectClass": [
+                "organizationalUnit",
+                "top"
+            ],
+            "ou": ["Users"],
+        }),
+        ("ou=Groups,%s" % ns.base, {
+            "objectClass": [
+                "organizationalUnit",
+                "top"
+            ],
+            "ou": ["Groups"],
+        }),
+    ]
+
+    for dn, modlist in actions:
+        process(ns, dn, modlist)
+
+
+def _user(ns):
+    cleanup(ns)
+
+    modlist = {
+        "objectClass": [
+            "organizationalPerson",
+            "person",
+            "extensibleObject",
+            "uidObject",
+            "inetOrgPerson",
+            "top"],
+        "cn": ["%s %s" % (ns.first, ns.last)],
+        "givenName": [ns.first],
+        "sn": [ns.last],
+        "uid": [ns.login],
+        "ou": ["Users"],
+    }
+    if ns.password:
+        modlist["userPassword"] = ns.password
+    process(ns, ns.dn, modlist)
+
+
+def _group(ns):
+    cleanup(ns, ou="Groups")
+
+    modlist = {
+        "objectClass": [
+            "groupOfUniqueNames",
+            "top"],
+        "cn": [ns.login],
+        "ou": ["Groups"],
+    }
+
+    members = set(ns.member)
+    if ns.owner:
+        rv = []
+        modlist["owner"] = rv
+        for owner in ns.owner:
+            rv.append(dn(ns, owner, ou="Users"))
+            members.add(owner)
+    if members:
+        rv = []
+        modlist["uniqueMember"] = rv
+        for member in members:
+            rv.append(dn(ns, member, ou="Users"))
+
+    process(ns, ns.dn, modlist)
+
+
+def _member(ns):
+    cleanup(ns, ou="Groups")
+    action = ldap.MOD_ADD
+    if not ns.add:
+        action = ldap.MOD_DELETE
+    modlist = [(action, "uniqueMember", [dn_user(ns, x)]) for x in ns.member]
+    process(ns, ns.dn, modlist, action="modify")
+
+
+def _owner(ns):
+    cleanup(ns, ou="Groups")
+    action = ldap.MOD_ADD
+    if not ns.add:
+        action = ldap.MOD_DELETE
+    modlist = [(action, "owner", [dn_user(ns, x)]) for x in ns.owner]
+    process(ns, ns.dn, modlist, action="modify")
+
+
+def _clear(ns):
+    cleanup(ns)
+    conn = connection(ns)
+    try:
+        for dn in ns.dn:
+            recursive_delete(conn, dn, not ns.apply)
+    finally:
+        conn.unbind()
+
+
+def recursive_delete(conn, base_dn, dry_run=True):
+    search = conn.search_s(base_dn, ldap.SCOPE_ONELEVEL)
+    for dn, _ in search:
+        recursive_delete(conn, dn, dry_run)
+    if dry_run:
+        print "Would delete:", base_dn
+    else:
+        print "Deleting: ", base_dn
+        conn.delete_s(base_dn)
+
+
+if __name__ == "__main__":
+    main()

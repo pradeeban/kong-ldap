@@ -1,21 +1,34 @@
-set -x
-./delete_containers.sh
-sleep 5
-docker ps -a
+#!/bin/bash
 
-##./install_cassandra.sh
+source ./env
+
+echo  "POSTGRES_VERSION=$POSTGRES_VERSION"
+echo " KONG_VERSION=$KONG_VERSION"
+
+echo "Remove all kong related containers and their volumes..."
+ ./delete_containers.sh
+
+
+echo "Start backend service hello world"
+./install_backend.sh
+
+##echo "Stop all kong related containers......................."
+##./stop_containers.sh
+
+echo "Start Apache Active Directory Server................."
+./install_apacheDS.sh
+
+sleep 4
+
+echo "Install Postgres......................................."
 ./install_postgres.sh
+
+echo "Wait for Postgres Build and Start......................"
 sleep 6
-docker ps -a
 
-./apply_migration.sh
-sleep 8 
-docker ps -a
+echo "Apply Database Migration..."
+./install_migration.sh
+sleep 10
 
+echo "Build, Run and Start Kong in Interactive Mode..........."
 ./install_kong.sh
-
-##docker build . -t gobuild
-##docker run  -p 3000:3000 --name go-server -dit gobuild
-sleep 2
-clear
-docker ps -a

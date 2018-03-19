@@ -1,14 +1,20 @@
 #!/bin/bash
 
-##  Once the database has been started and prepared, 
-## we can start a Kong container and link it to the database container, 
-## and configuring the KONG_DATABASE environment variable with 
-## either cassandra or postgres depending on which database 
+##  Once the database has been started and prepared,
+## we can start a Kong container and link it to the database container,
+## and configuring the KONG_DATABASE environment variable with
+## either cassandra or postgres depending on which database
 ## you decided to use:
 
+source ./env
+
+##--link kong-ldap:kong-ldap \
  ## docker run -d --name kong \
  docker run  --name kong \
     --link kong-database:kong-database \
+    --link kong-ldap:kong-ldap \
+    --link kong-backend:kong-backend \
+    -e "KONG_LOG_LEVEL=debug" \
     -e "KONG_DATABASE=postgres" \
     -e "KONG_PG_HOST=kong-database" \
     -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
@@ -22,6 +28,4 @@
     -p 8443:8443 \
     -p 8001:8001 \
     -p 8444:8444 \
-    kong:latest
-
-
+    kong:${KONG_VERSION}
