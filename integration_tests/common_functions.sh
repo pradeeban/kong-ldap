@@ -19,8 +19,9 @@ export upstream_url="http://kong-backend:9090"
 ######## end of kong api related
 
 ######## consumer related
-consumer=annie
+consumer=Aladdin
 apiKey=12345secret
+consumerPass=OpenSesame
 
 ## LDAP related
 ##export ldap_host=localhost

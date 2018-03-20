@@ -7,5 +7,5 @@ echo "....... Adding plugin: $plugin"
 ##curl -X POST ${kong_admin_url}/plugins \
 set -x
 curl -X POST ${kong_admin_url}/apis/${api_name}/plugins \
-    --data "name=key-auth" \
+    --data "name=${plugin}" \
     --data "config.hide_credentials=true"
