@@ -1,24 +1,24 @@
 #!/bin/bash
 
-## kong related
+######## kong admin/application related
 export kong_host=localhost
 export kong_admin_port=8001
 export kong_api_port=8000
 export kong_admin_url=http://${kong_host}:${kong_admin_port}
 export kong_api_url=http://${kong_host}:${kong_api_port}
 
-##api_name=example-api
-##api_hosts=example.com
-export api_name=tcia-api
-##export api_hosts=tcia.org
-export api_hosts=openmicroscopy.org
+######## end of kong admin/application related
+
+######## kong api related
+export api_name=tcia_api
+export api_hosts=tcia_server
 ##export upstream_url="http://mockbin.org"
-export upstream_url="http://go-server:3000"
+##export upstream_url="http://go-server:3000"
 export upstream_url="http://kong-backend:9090"
 
-## end of kong related
+######## end of kong api related
 
-## consumer related
+######## consumer related
 consumer=annie
 apiKey=12345secret
 
