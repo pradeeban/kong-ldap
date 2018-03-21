@@ -22,7 +22,7 @@ public class Application {
     @RequestMapping("/")
     public String home() {
         Calendar cal = Calendar.getInstance();
-        return "Hello Docker World at: " + sdf.format(cal.getTime()) + System.getProperty("line.separator");
+        return "Backend Resource Response at: " + sdf.format(cal.getTime()) + System.getProperty("line.separator");
     }
 
     public static void main(String[] args) {

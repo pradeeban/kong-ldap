@@ -12,4 +12,4 @@ credential=$(../encoderBase64.sh $credentialRaw)
 curl -i -X GET \
   --url ${kong_api_url} \
   --header "Host: ${api_hosts}" \
---header "Authorization: Basic ${credential}"
+  --header "Authorization: Basic ${credential}"
