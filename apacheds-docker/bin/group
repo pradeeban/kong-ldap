@@ -1,0 +1,25 @@
+#!/bin/bash
+
+LDAPHOST=${LDAPHOST:-localhost}
+LDAPPORT=${LDAPPORT:-10389}
+LDAPPASS=${LDAPPASS:-secret}
+LDAPDOMAIN=${LDAPDOMAIN:-dc=openmicroscopy,dc=org}
+
+LDAPADD="ldapadd -v -h ${LDAPHOST} -p ${LDAPPORT} -x -D uid=admin,ou=system -w ${LDAPPASS}"
+
+GROUP=$1
+shift
+
+if [ $1 = "add" ]; then
+    $LDAPADD << EOF
+dn: cn=$GROUP,ou=Groups,$LDAPDOMAIN
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: $GROUP
+uniqueMember: uid=dummy,ou=Users,$LDAPDOMAIN
+EOF
+
+else
+    echo "huh?"
+    exit 2
+fi
