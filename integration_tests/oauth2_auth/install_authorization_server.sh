@@ -6,12 +6,12 @@ npm install
 ## provision_key that has been returned when we added the plugin.
 
 ## Export the environment variables used by the Node.js application:
-export PROVISION_KEY="4aPNuWwcu15AUKbC5fD6nRWLj7BvWhlP"
+export PROVISION_KEY="CHANGEME"
 
 ##export KONG_ADMIN=${kong_admin_url}
 ##export KONG_API=${kong_api_url}
-export KONG_ADMIN="http://127.0.0.1:8001"
-export KONG_API="https://127.0.0.1:8443"
+export KONG_ADMIN="http://localhost:8001"
+export KONG_API="https://localhost:8443"
 export API_PATH="/cats"
 export SCOPES="{ \
   \"email\": \"Grant permissions to read your email address\", \

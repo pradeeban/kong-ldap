@@ -14,6 +14,14 @@ sleep 2
 ./create_oauth_client_app.sh >> ${output}
 sleep 2
 
-echo "Get provision_key from ${output}, and update in install_authorization_server.sh "
-echo "Run ./install_authorization_server.sh"
-##./test_credential.sh
+provision_key=$(node parse.js)
+
+
+./start_auth_server.sh
+
+
+##sleep 2
+
+##url="http://127.0.0.1:3000/authorize?response_type=code&scope=email%20address&client_id=helloWorldApp_id"
+
+##/usr/bin/open -a "/Applications/Google Chrome.app" "$url"

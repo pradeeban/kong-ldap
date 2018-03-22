@@ -10,5 +10,5 @@ echo ">>>>>>>>> Adding customer: username=${consumer}_${module}"
 set -x
 curl -i -X POST \
   --url ${kong_admin_url}/consumers/ \
-  --data "username=${consumer}_${module}" \
-  --data "custom_id=${consumer}_${module}_id"
+  --data "username=thefosk" \
+  --data "custom_id=thefosk_id"

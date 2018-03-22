@@ -12,7 +12,7 @@ client_secret=1234Secret
 redirect_uri="http://getkong.org/"
 
 set -x
-curl -X POST ${kong_admin_url}/consumers/${consumer}_${module}/oauth2 \
+curl -X POST ${kong_admin_url}/consumers/thefosk/oauth2/  \
     --data "name=${client_name}" \
     --data "client_id=${client_id}" \
     --data "client_secret=${client_secret}" \

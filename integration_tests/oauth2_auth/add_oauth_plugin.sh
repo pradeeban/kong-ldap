@@ -12,8 +12,8 @@ plugin=oauth2
 echo "....... Adding plugin: $plugin"
 
 set -x
-curl -X POST ${kong_admin_url}/apis/${api_name}_${module}/plugins \
-    --data "name=${plugin}" \
-    --data "config.enable_authorization_code=true" \
-    --data "config.scopes=email,phone,address" \
-    --data "config.mandatory_scope=true"
+curl -X POST ${kong_admin_url}/apis/cats/plugins/ \
+    --data "name=oauth2" \
+    --data "config.scopes=email, phone, address" \
+    --data "config.mandatory_scope=true" \
+    --data "config.enable_authorization_code=true"
