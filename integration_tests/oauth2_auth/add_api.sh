@@ -8,6 +8,8 @@ echo ">>>>>>>>> Adding API: api_name=${api_name}_${module}, api_hosts=${api_host
 
 set -x
 
+## Note: do not add hosts, otherwise, it won't wokk
+## --data "hosts=mockbin.org" \
 
 curl -i -X POST \
   --url ${kong_admin_url}/apis/ \
