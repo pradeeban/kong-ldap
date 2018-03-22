@@ -21,5 +21,5 @@
 ## this one works
 ## docker run -d --name kong-dashboard -p 8080:8080 --link kong:kong pgbi/kong-dashboard:v2
 
-docker run --link kong:kong -d --name kong-dashboard  --rm -p 8080:8080 pgbi/kong-dashboard start --kong-url http://kong:8001
+docker run --link kong:kong -d --name kong-dashboard  --rm -p 8080:8080 pgbi/kong-dashboard:v3.2.0 start --kong-url http://kong:8001
 docker ps -a |grep kong
