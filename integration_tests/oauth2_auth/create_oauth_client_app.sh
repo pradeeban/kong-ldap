@@ -9,7 +9,8 @@ module=oauth2Auth
 client_name=helloWorldApp
 client_id=helloWorldApp_id
 client_secret=1234Secret
-redirect_uri="http://getkong.org/"
+##redirect_uri="http://getkong.org/"
+redirect_uri="http://localhost:9090/"
 
 set -x
 curl -X POST ${kong_admin_url}/consumers/thefosk/oauth2/  \
