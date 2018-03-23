@@ -14,7 +14,7 @@ export name=${module}
 export url=http://mockbin.org
 export hosts=example.com
 
-echo ">>>>>>>>> Adding Service: name=${name}, url=${url}"
+echo "Adding Service: name=${name}, url=${url}"
 
 set -x
 curl -i -X POST \
@@ -24,7 +24,7 @@ curl -i -X POST \
 
 
 
-echo ">>>>>>>>> Adding Route for service:${name} with hosts: ${hosts}"
+echo "Adding Route for service:${name} with hosts: ${hosts}"
 
 set -x
 curl -i -X POST \
