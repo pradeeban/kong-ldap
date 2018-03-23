@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+gs-spring-boot-docker/.travis.yml
+gs-spring-boot-docker/CONTRIBUTING.adoc
+gs-spring-boot-docker/LICENSE.code.txt
+gs-spring-boot-docker/LICENSE.writing.txt
+gs-spring-boot-docker/complete/.jdk8
+gs-spring-boot-docker/complete/gradlew.bat
+install_konga_dashboard.sh
+integration_tests/oauth2_auth/package-lock.json
+integration_tests/oauth2_auth/tmp_auth.sh
+integration_tests/user_data.ldif.log

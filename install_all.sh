@@ -8,12 +8,11 @@ echo " KONG_VERSION=$KONG_VERSION"
 echo "Remove all kong related containers and their volumes..."
  ./delete_containers.sh
 
+##echo "Stop all kong related containers......................."
+##./stop_containers.sh
 
 echo "Start backend service hello world"
 ./install_backend.sh
-
-##echo "Stop all kong related containers......................."
-##./stop_containers.sh
 
 echo "Start Apache Active Directory Server................."
 ./install_apacheDS.sh
@@ -32,3 +31,6 @@ sleep 10
 
 echo "Build, Run and Start Kong in Interactive Mode..........."
 ./install_kong.sh
+
+sleep 5
+./install_konga_dashboard.sh
