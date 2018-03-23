@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-export module=requestTransformer
+export module=requesttransformer
 export api_name=requestTransformerTestApi
 export hosts=request-transformer.com
 export consumer_name=requestTransUser

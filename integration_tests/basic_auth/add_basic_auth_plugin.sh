@@ -7,7 +7,7 @@
 
 source ../common_functions.sh
 
-module=basicAuth
+module=basicauth
 plugin=basic-auth
 echo "....... Adding plugin: $plugin"
 ##curl -X POST ${kong_admin_url}/plugins \

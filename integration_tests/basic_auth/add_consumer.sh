@@ -4,7 +4,7 @@
 ## object, that represents a user consuming the API. 
 source ../common_functions.sh
 
-module=basicAuth
+module=basicauth
 echo ">>>>>>>>> Adding customer: username=${consumer}_${module}"
 
 curl -i -X POST \

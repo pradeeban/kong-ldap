@@ -7,7 +7,7 @@
 
 source ../common_functions.sh
 
-module=oauth2Auth
+module=oauth2auth
 plugin=oauth2
 echo "....... Adding plugin: $plugin"
 

@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-module=oauth2Auth
+module=oauth2auth
 echo ">>>>>>>>> Adding API: api_name=${api_name}_${module}, api_hosts=${api_hosts}_${module}"
 
 

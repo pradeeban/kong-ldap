@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-module=keyAuth
+module=keyauth
 echo ">>>>>>>>> Adding customer: username=${consumer}_${module}"
 
 curl -i -X POST \

@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-export module=responseTransformer
+export module=responsetransformer
 export api_name=responseTransformerTestApi
 export hosts=response-transformer.com
 export consumer_name=responseTransUser

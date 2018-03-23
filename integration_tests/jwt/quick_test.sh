@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-module=JWT
+module=jwt
 api_name=jwttestapi
 consumer_name=jeff
 customer_id=jeff_id

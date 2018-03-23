@@ -9,7 +9,7 @@
 
 source ../common_functions.sh
 
-export module=addService
+export module=addservice
 export name=${module}
 export url=http://mockbin.org
 export hosts=example.com

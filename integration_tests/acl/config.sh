@@ -84,14 +84,14 @@ echo ""
 
 ###### Create Non Valid Consumer
 
-echo "Create a Non Valid Consumer"
+echo "Create a Non Valid Consumer who is not in the whitelist"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/         \
       --data "username=${consumerName}_bad"          \
       --data "custom_id=${consumerName}_bad_id"
 
 
-echo "Associating Valid Consumer ${consumerName}_bad with acl"
+echo "Associating non Valid Consumer ${consumerName}_bad with acl"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/${consumerName}_bad/acls    \
       --data "group=group100"
@@ -102,7 +102,7 @@ curl -X POST \
       --data "key=${key}_bad"
 
 
-echo "Verify that valid Consumer Credential are Not valid"
+echo "Verify that non valid Consumer Credential are Not valid"
 curl -X GET \
       --url ${kong_api_url}     \
       --header "Host: ${hosts}" \
