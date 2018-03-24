@@ -11,8 +11,8 @@ source ../common_functions.sh
 
 export module=addservice
 export name=${module}
-export url=http://mockbin.org
-export hosts=example.com
+export url=${upstream_url}
+export hosts=${module}.org
 
 echo "Adding Service: name=${name}, url=${url}"
 

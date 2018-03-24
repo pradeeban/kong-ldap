@@ -11,6 +11,9 @@ export key=${consumerName}_secret_key
 
 
 echo "Verify that valid Consumer Credential are valid"
+
+set -x 
+
 curl -X GET \
       --url ${kong_api_url}     \
       --header "Host: ${hosts}" \

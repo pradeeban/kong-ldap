@@ -3,6 +3,7 @@
 
 source ../common_functions.sh
 source ./config.sh
+
 set -x
 
 curl -i -X GET \
