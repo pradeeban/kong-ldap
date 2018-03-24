@@ -1,51 +1,31 @@
 #!/usr/bin/env bash
-## for quick start
+
 
 source ../common_functions.sh
 
-module=jwt
-api_name=jwttestapi
-consumer_name=jeff
-customer_id=jeff_id
+export module=jwt
+export name=${module}_srv
+export url=${upstream_url}
+export hosts=${module}.org
+export consumerName=${module}_consumer
+##export key=${consumerName}_key
+##export secret=${consumerName}_secret
+##export algorithm=HS256
+
+export key=cef1fe6937e444a6b18a26965d619718
+export secret=b9f813fb8753440eabb1b44f9ba4da2f
+export algorithm=HS256
+
+set -x
+jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjZWYxZmU2OTM3ZTQ0NGE2YjE4YTI2OTY1ZDYxOTcxOCIsImlhdCI6bnVsbCwiZXhwIjpudWxsLCJhdWQiOiIiLCJzdWIiOiIifQ.50bnA9d3wjIYIx6m-fzxIHQHfXF6zuJRPMUdk8-4LTU
+
+echo "Test JWT from thresponse"
+curl -i -X  GET \
+      --url ${kong_api_url}     \
+      --header "Authorization: Bearer ${jwt}" \
+      --header "Host: ${hosts}"
 
 
-set -X
-
-###### Create API
-
-curl -X POST \
-  --url ${kong_admin_url}/apis/ \
-  --data "name=${api_name}" \
-  --data "uris=/jwttestapi" \
-  --data "hosts=mockbin.org" \
-  --data "upstream_url=http://mockbin.org/" \
-  --data "preserve_host=false"
-
-sleep 2
-
-###### Configure jwt config
-curl -X POST \
-   --url ${kong_admin_url}/apis/${api_name}/plugins \
-   --data "name=jwt"
-
-###### Create a Consumer
-curl -X POST \
-  --url ${kong_admin_url}/consumers/ \
-  --data "username=${consumer_name}" \
-  --data "custom_id=${customer_id}"
-
-
-###### Create a JWT Credential: provision a new HS256 JWT credential
-curl -X POST \
-  --url ${kong_admin_url}/consumers/${consumer_name}/jwt \
-  -H "Content-Type: application/x-www-form-urlencoded"
-
-  ## {"created_at":1521737676000,"id":"68e617c2-da27-44aa-a1f5-ff1fa8d3b810","algorithm":"HS256","key":"XrgAlPdmJAmpvdZYaCNi4rZ6hKqSB5T7","secret":"2X1eydMt4oN4u04iooIo9MXm6IeseO5N","consumer_id":"1b310b86-5a2e-42ca-aaf9-d97d9be33486"}
-
-jwtToken=J0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJYcmdBbFBkbUpBbXB2ZFpZYUNOaTRyWjZoS3FTQjVUNyIsInVzZXJuYW1lIjoiamVmZiJ9.DExR2htbbd1IP3vcFif-asNn1zh2d1PRteMdd4UxWDI
-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJYcmdBbFBkbUpBbXB2ZFpZYUNOaTRyWjZoS3FTQjVUNyIsInVzZXJuYW1lIjoiamVmZiJ9.EJMeYVMEUg5uSm0OdykMA0aCURa1ClIpvQwyaKUNZG0
-
-jwtToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJYcmdBbFBkbUpBbXB2ZFpZYUNOaTRyWjZoS3FTQjVUNyIsInVzZXJuYW1lIjoiamVmZiJ9.EJMeYVMEUg5uSm0OdykMA0aCURa1ClIpvQwyaKUNZG0
-curl -i http://localhost:8000/jwttestapi \
-  -H "Authorization: Bearer $jwtToken}" \
-  --header "Host: mockbin.org" 
+echo ""
+echo "The plugin will append some headers to the request"
+docker logs kong-backend
