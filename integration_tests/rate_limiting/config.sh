@@ -36,15 +36,9 @@ curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/routes    \
       --data "hosts[]=${hosts}"
 
-if [ -z "$route_id" ]
-then
-
-      echo "Input route id (id from the previous response), followed by [ENTER]:"
-      read route_id
-      echo "routeId is ${route_id}"
-else
-      echo "route id ${route_id}"
-fi
+echo "Input route id (id from the previous response), followed by [ENTER]:"
+route_id=$(getUserInput)
+echo "route id is ${route_id}"
 
 echo "Enable rate-limiting plugin for Route "
 curl -i -X POST \
@@ -60,15 +54,9 @@ curl -i -X POST \
       --data "username=${consumerName}"          \
       --data "custom_id=${consumerName}_id"
 
-if [ -z "$consumer_id" ]
-then
-
-      echo "Input consumer id (id from the previous response), followed by [ENTER]:"
-      read consumer_id
-      echo "consumer is ${consumer_id}"
-else
-      echo "consumer id ${consumer_id}"
-fi
+echo "Input consumer id (id from the previous response), followed by [ENTER]:"
+consumer_id=$(getUserInput)
+echo "consumer id is ${consumer_id}"
 
 echo "Enabling rate-limiting for Consumer ${consumerName}, consumer id: ${consumer_id}"
 curl -i -X POST \

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ## for quick start
 
 source ../common_functions.sh

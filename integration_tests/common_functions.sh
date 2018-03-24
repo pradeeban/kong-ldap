@@ -33,3 +33,11 @@ export ldap_port=389
 ## end of LDAP related
 ##export base_dn="dc=openmicroscopy,dc=org"
 export base_dn="dc=springframework,dc=org"
+
+#####################################################
+## get user input
+#####################################################
+function getUserInput() {
+    read userInput
+    echo $userInput
+}
