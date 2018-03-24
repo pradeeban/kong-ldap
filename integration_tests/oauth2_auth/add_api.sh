@@ -15,6 +15,7 @@ curl -i -X POST \
   --url ${kong_admin_url}/apis/ \
   --data "name=cats" \
   --data "uris=/cats" \
+  --data "hosts=mockbin.org" \
   --data "upstream_url=http://mockbin.org/" \
   --data "preserve_host=false"
 
