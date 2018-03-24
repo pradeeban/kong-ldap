@@ -1,5 +1,7 @@
 set -x
 
+source ../common_functions.sh
+
 output=/tmp/oauth.log
 
 ./add_api.sh > ${output}
@@ -48,11 +50,14 @@ curl https://localhost:8443/cats/oauth2/authorize \
     --data "authenticated_userid=userid123" --insecure
 
 
-exit
+echo "Input code from the previous response, followed by [ENTER]:"
+code=$(getUserInput)
+echo "code=${code}"
+
 ##curl https://localhost:8443/cats/oauth2/authorize --header "Host: mockbin.org" --data client_id=helloWorldApp_id --data response_type=code --data 'scope=email address' --data provision_key=dndlBlAx44VOIkTjjxT3ed7wyh28x3CX --data authenticated_userid=userid123 --insecure
 ## Get the toke by authorization code
-code=V2M8HpS2OXNWba37QUHapTEYyKc3V0xZ
-curl https://127.0.0.1:8443/oauth2/token \
+##code=V2M8HpS2OXNWba37QUHapTEYyKc3V0xZ
+curl https://127.0.0.1:8443/cats/oauth2/token \
      --header "Host: mockbin.org" \
      -d "grant_type=authorization_code" \
      -d "client_id=helloWorldApp_id" \
