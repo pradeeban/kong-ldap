@@ -3,42 +3,42 @@
 
 source ../common_functions.sh
 
-file1=/tmp/k1.json
+export module=oauth2
+export name=${module}_srv
+export url=${upstream_url}
+export hosts=${module}.org
+export consumerName=${module}_consumer
+export client_id=${module}_client
+export client_secret=${client_id}_secret
+export client_app_name=${module}_client
 
-url="http://localhost:8001/plugins?name=oauth2"
+echo "Input provision_key from the previous response, followed by [ENTER]:"
+provision_key=$(getUserInput)
+echo "provision_key is ${provision_key}"
 
-curl ${url} -o ${file1}
-
-provision_key=$(node parse.js)
-
-echo "PROVISION_KEY=$provision_key"
-
-
-##set -x
-## check client
-curl http://localhost:8001/oauth2?client_id=helloWorldApp_id
+echo ""
 
 ##  Get authorization code
-curl https://localhost:8443/cats/oauth2/authorize \
-    --header "Host: mockbin.org" \
-    --data "client_id=helloWorldApp_id" \
+curl https://localhost:8443/oauth2/authorize \
+    --header "Host: ${hosts}" \
+    --data "client_id=${client_id}" \
     --data "response_type=code" \
     --data "scope=email address" \
     --data "authenticated_userid=userid123"  \
     --data "provision_key=${provision_key}" \
     --insecure
 
+echo ""
 
 echo "Input code from the previous response, followed by [ENTER]:"
 code=$(getUserInput)
 echo "code=${code}"
 
-
-curl https://127.0.0.1:8443/cats/oauth2/token \
-     --header "Host: mockbin.org" \
+curl https://localhost:8443/oauth2/token \
+     --header "Host: ${hosts}" \
      -d "grant_type=authorization_code" \
-     -d "client_id=helloWorldApp_id" \
-     -d "client_secret=1234Secret" \
-     -d "redirect_uri=http://localhost:9090/" \
+     -d "client_id=${client_id}" \
+     -d "client_secret=${client_secret}" \
+     -d "redirect_uri=${url}/" \
      -d "code=${code}" \
      --insecure
