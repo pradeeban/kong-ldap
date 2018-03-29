@@ -8,8 +8,6 @@
 
 source ./env
 
-##--link kong-ldap:kong-ldap \
- ## docker run -d --name kong \
  docker run  --name kong  -d                    \
             --link kong-database:kong-database  \
             --link kong-ldap:kong-ldap          \

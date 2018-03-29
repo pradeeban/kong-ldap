@@ -1,8 +1,6 @@
-
 #!/bin/bash
 
-source ../common_functions.sh
-source ./config.sh
+source ./env
 
 set -x
 

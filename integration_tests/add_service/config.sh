@@ -7,27 +7,23 @@
 # need to add a Route to it. Routes specify how (and if) requests are
 # sent to their Services after they reach Kong. A single Service can have many Routes.
 
-source ../common_functions.sh
+source ./env
 
-export module=addservice
-export name=${module}
-export url=${upstream_url}
-export hosts=${module}.org
+#############################################################
+echo "Adding Service(API): name=${name}, url=${url}"
 
-echo "Adding Service: name=${name}, url=${url}"
-
-set -x
 curl -i -X POST \
       --url ${kong_admin_url}/services/ \
       --data "name=${name}" \
       --data "url=${url}" \
 
-
-
+#############################################################
 echo "Adding Route for service:${name} with hosts: ${hosts}"
 
-set -x
 curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/routes \
       --data "hosts[]=${hosts}"
 
+#############################################################
+
+echo "To test: ./test.sh"

@@ -4,6 +4,6 @@ source ./env
 
 logfile=${KONG_LOG_FILE}
 
-echo "log file: ${logfile}"
+echo "Kong log file: ${logfile}"
 
 ./install_all.sh 2>&1 | tee  ${logfile}

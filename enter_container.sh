@@ -1,3 +1,4 @@
+#!/bin/bash
 
 container=$*
 echo "Enter container $container with bash shell"

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ## Start a Cassandra containers by executing:
 set -x
 

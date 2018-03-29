@@ -1,0 +1,8 @@
+#!/bin/bash
+
+source ../common_functions.sh
+
+export module=addservice
+export name=${module}_api
+export url=${upstream_url}
+export hosts=${module}.org
