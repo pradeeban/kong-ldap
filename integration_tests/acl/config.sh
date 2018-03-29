@@ -6,100 +6,95 @@
 # to have been already enabled on the Service or the Route (or API).
 
 
-source ../common_functions.sh
+source ./env
 
-export module=acl
-export name=${module}_srv
-export url=${upstream_url}
-export hosts=${module}.org
-export route_id=""
-export consumerName=${module}_consumer
-export key=${consumerName}_secret_key
+#############################################################
+echo "Adding Service(API): name=${name}, url=${url}"
+serviceId=$(createService ${name} ${url})
+echo "Created service Id: ${serviceId}"
 
-echo "Adding Service: name=${name}, url=${url}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/    \
-      --data "name=${name}"                 \
-      --data "url=${url}"
+sleep 3
 
+#############################################################
 echo "Add acl plugin with whitelist: group1, group2 on top of a Service ${name}"
 curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/plugins \
       --data "name=acl"             \
       --data "config.whitelist=group1, group2"
 
+
+#############################################################
 echo "Adding Route for service:${name} with hosts: ${hosts}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/${name}/routes    \
-      --data "hosts[]=${hosts}"
+routeId=$(createRoute ${name} ${hosts})
+echo "Created route Id: ${routeId}"
 
-echo "Input route id (id from the previous response), followed by [ENTER]:"
-route_id=$(getUserInput)
-echo "route id is ${route_id}"
+sleep 3
 
-echo "Enable acl plugin for Route for service:${name} with hosts: ${hosts} on top of a Route "
+#############################################################
+echo "Enable acl plugin for Route for service:${name} with hosts: ${hosts} on top of a routeId: ${routeId} "
 curl -i -X POST \
-      --url ${kong_admin_url}/routes/${route_id}/plugins       \
+      --url ${kong_admin_url}/routes/${routeId}/plugins       \
       --data "name=acl"  \
       --data "config.whitelist=group1, group2"
 
+sleep 3
 
+#############################################################
 echo "Enable Key-Auth plugin on Service: ${name}"
 curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/plugins   \
       --data name=key-auth
 
+sleep 3
+
+#############################################################
 echo "Create a Valid Consumer"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/         \
       --data "username=${consumerName}"          \
       --data "custom_id=${consumerName}_id"
 
+sleep 3
 
+#############################################################
 echo "Associating Valid Consumer ${consumerName} with acl"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/${consumerName}/acls    \
       --data "group=group1"
 
+sleep 3
+
+#############################################################
 echo "Provision Key Credential for valid Consumer: ${consumerName}"
 curl -X POST \
       --url ${kong_admin_url}/consumers/${consumerName}/key-auth   \
-      --data "key=${key}"
+      --data "key=${apiKey}"
 
 
-echo "Verify that valid Consumer Credential are valid"
-curl -X GET \
-      --url ${kong_api_url}     \
-      --header "Host: ${hosts}" \
-      --header "apikey: ${key}"
+sleep 3
 
-echo "You should see 'Backend Resource Response ...' message"
-echo ""
-
-###### Create Non Valid Consumer
-
+#############################################################
 echo "Create a Non Valid Consumer who is not in the whitelist"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/         \
       --data "username=${consumerName}_bad"          \
       --data "custom_id=${consumerName}_bad_id"
 
+sleep 3
 
+#############################################################
 echo "Associating non Valid Consumer ${consumerName}_bad with acl"
 curl -i -X POST \
       --url ${kong_admin_url}/consumers/${consumerName}_bad/acls    \
       --data "group=group100"
 
+sleep 3
+
+#############################################################
 echo "Provision Key Credential for non valid Consumer: ${consumerName}_bad"
 curl -X POST \
       --url ${kong_admin_url}/consumers/${consumerName}_bad/key-auth   \
-      --data "key=${key}_bad"
+      --data "key=${apiKey}_bad"
 
-
-echo "Verify that non valid Consumer Credential are Not valid"
-curl -X GET \
-      --url ${kong_api_url}     \
-      --header "Host: ${hosts}" \
-      --header "apikey: ${key}_bad"
-
-echo "You should see 'You cannot consume this service' message"
+#####################################################
+echo "To test: ./test.sh"
