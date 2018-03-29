@@ -1,12 +1,6 @@
 ## for quick start
 
-source ../common_functions.sh
-
-export module=responsetransformer
-export api_name=responseTransformerTestApi
-export hosts=response-transformer.com
-export consumer_name=responseTransUser
-export customer_id=responseTransUser_id
+source ./env
 
 set -x
 
