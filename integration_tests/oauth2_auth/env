@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source ../common_functions.sh
+
+export module=oauth2
+export name=${module}_api
+export url=${upstream_url}
+export hosts=${module}.org
+export consumerName=${module}_consumer
+export client_id=${module}_client
+export client_secret=${client_id}_secret
+export client_app_name=${module}_client

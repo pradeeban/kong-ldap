@@ -17,8 +17,9 @@ provision_key=$(getUserInput)
 echo "provision_key is ${provision_key}"
 
 echo ""
-
+set -x
 ##  Get authorization code
+## invalid scopes included --data "scope=email address junk" \
 curl https://localhost:8443/oauth2/authorize \
     --header "Host: ${hosts}" \
     --data "client_id=${client_id}" \
@@ -42,3 +43,16 @@ curl https://localhost:8443/oauth2/token \
      -d "redirect_uri=${url}/" \
      -d "code=${code}" \
      --insecure
+
+echo ""
+
+echo "Input token from the previous response, followed by [ENTER]:"
+token=$(getUserInput)
+echo "token=${token}"
+
+curl https://localhost:8000/ \
+     --header "Host: ${hosts}" \
+     --header "Authorization: Bearer $token" \
+     --insecure
+
+echo "Open postman to test since SSL certificate is not added yet..."
