@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source ../common_functions.sh
+
+export module=ratelimiting
+export name=${module}_api
+export url=${upstream_url}
+export hosts=${module}.org
+export consumerName=${module}_consumer
+export key=${consumerName}_secret_key
