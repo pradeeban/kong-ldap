@@ -1,12 +1,8 @@
 ## for quick start
 
-source ../common_functions.sh
+source ./env
 
-export module=requestTransformer
-export api_name=requestTransformerTestApi
-export hosts=request-transformer.com
-export consumer_name=requestTransUser
-export customer_id=requestTransUser_id
+
 
 set -x
 

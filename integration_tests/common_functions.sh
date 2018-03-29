@@ -33,3 +33,50 @@ export ldap_port=389
 ## end of LDAP related
 ##export base_dn="dc=openmicroscopy,dc=org"
 export base_dn="dc=springframework,dc=org"
+
+#####################################################
+## get user input
+#####################################################
+function getUserInput() {
+    read userInput
+    echo ${userInput}
+}
+
+#####################################################
+## create consumer, return consumer id
+#####################################################
+function createConsumer() {
+    local name=$1
+    local tmpFile=/tmp/consumer.json
+    curl  -X POST --url ${kong_admin_url}/consumers/ --data "username=${consumerName}" --data "custom_id=${consumerName}_id"> ${tmpFile}
+    local id=$(node ../parseJson.js ${tmpFile} "id")
+    echo ${id}
+}
+
+#####################################################
+## create service, return service id
+#####################################################
+function createService() {
+    local name=$1
+    local url=$2
+    local tmpFile=/tmp/service.json
+    curl -X POST --url ${kong_admin_url}/services/ --data "name=${name}" --data "url=${url}" > ${tmpFile}
+    local id=$(node ../parseJson.js ${tmpFile} "id")
+    echo ${id}
+}
+
+#####################################################
+## create route on top of service, return service id
+#####################################################
+function createRoute() {
+    local serviceName=$1
+    local url=$2
+    local tmpFile=/tmp/route.json
+    curl -X POST --url ${kong_admin_url}/services/${serviceName}/routes --data "hosts[]=${hosts}" > ${tmpFile}
+    local id=$(node ../parseJson.js ${tmpFile} "id")
+    echo ${id}
+}
+
+
+
+

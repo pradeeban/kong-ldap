@@ -5,7 +5,7 @@
 
 source ../common_functions.sh
 
-module=oauth2Auth
+module=oauth2auth
 client_name=helloWorldApp
 client_id=helloWorldApp_id
 client_secret=1234Secret

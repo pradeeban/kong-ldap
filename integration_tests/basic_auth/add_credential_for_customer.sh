@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-module=basicAuth
+module=basicauth
 echo ">>>>>>>>> Adding API key: api_name=$apikey, customer=${consumer}_basic"
 set -x
 curl -i -X POST \

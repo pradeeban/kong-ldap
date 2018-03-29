@@ -1,0 +1,19 @@
+#!/bin/bash
+
+source ../common_functions.sh
+
+export module=jwt
+export name=${module}_api
+export url=${upstream_url}
+export hosts=${module}.org
+export consumerName=${module}_consumer
+
+export key=cef1fe6937e444a6b18a26965d619718
+export secret=b9f813fb8753440eabb1b44f9ba4da2f
+export algorithm=HS256
+
+
+
+
+
+

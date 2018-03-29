@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source ../common_functions.sh
-module=keyAuth
+module=keyauth
 echo ">>>>>>>>> Adding API key: api_name=$apikey, customer=${consumer}_${module}"
 set -x
 curl -i -X POST \

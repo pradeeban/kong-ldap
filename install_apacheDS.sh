@@ -19,4 +19,7 @@ docker build -t openmicroscopy/apacheds apacheds-docker
 
 ## start the container
 ##docker run --name ldap -d -p 389:10389 openmicroscopy/apacheds
-docker run --hostname lion.bmi.emory.edu --name kong-ldap -d  -p 389:10389 openmicroscopy/apacheds
+docker run --hostname lion.bmi.emory.edu \
+        --name kong-ldap -d              \
+        -p 389:10389                     \
+        openmicroscopy/apacheds

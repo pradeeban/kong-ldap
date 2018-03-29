@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source ../common_functions.sh
+
+export module=responsetransformer
+export api_name=${module}_api
+export hosts=${module}.org
+export consumer_name=${module}_consumer
+export customer_id=${consumer_name}_id
+

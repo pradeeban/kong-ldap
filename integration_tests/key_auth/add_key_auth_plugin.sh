@@ -2,7 +2,7 @@
 
 source ../common_functions.sh
 
-module=keyAuth
+module=keyauth
 plugin=key-auth
 echo "....... Adding plugin: $plugin"
 ##curl -X POST ${kong_admin_url}/plugins \

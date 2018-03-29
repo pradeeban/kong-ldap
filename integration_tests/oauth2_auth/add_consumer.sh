@@ -4,7 +4,7 @@
 ## Consumer object, that represents a user consuming the API.
 source ../common_functions.sh
 
-module=oauth2Auth
+module=oauth2auth
 echo ">>>>>>>>> Adding customer: username=${consumer}_${module}"
 
 set -x
