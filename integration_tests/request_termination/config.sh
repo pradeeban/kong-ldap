@@ -5,25 +5,16 @@
 # (or the deprecated API entity), or even block a Consumer.
 
 
-source ../common_functions.sh
+source ./env
 
-export module=requesttermination
-export name=${module}_srv
-export url=${upstream_url}
-export hosts=${module}.org
-export route_id=""
-export consumerName=${module}_consumer
-export consumer_id=''
-export key=${consumerName}_secret_key
-export message="Under Maintenance...!"
+#############################################################
+echo "Adding Service(API): name=${name}, url=${url}"
+serviceId=$(createService ${name} ${url})
+echo "Created service Id: ${serviceId}"
 
-echo "Adding Service: name=${name}, url=${url}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/    \
-      --data "name=${name}"                 \
-      --data "url=${url}"
+sleep 2
 
-
+#############################################################
 echo "Add request-termination plugin on top of a Service ${name}"
 curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/plugins \
@@ -31,15 +22,15 @@ curl -i -X POST \
       --data "config.status_code=403" \
       --data "config.message=${message}"
 
+sleep 2
+#############################################################
 echo "Adding Route for service:${name} with hosts: ${hosts}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/${name}/routes    \
-      --data "hosts[]=${hosts}"
+route_id=$(createRoute ${name} ${hosts})
+echo "Created route Id: ${route_id}"
 
-echo "Input route id (id from the previous response), followed by [ENTER]:"
-route_id=$(getUserInput)
-echo "route id is ${route_id}"
+sleep 2
 
+#############################################################
 echo "Enable request-termination plugin for Route "
 curl -i -X POST \
       --url ${kong_admin_url}/routes/${route_id}/plugins       \
@@ -47,17 +38,15 @@ curl -i -X POST \
       --data "config.status_code=403" \
       --data "config.message=${message}"
 
-
+sleep 2
+#############################################################
 echo "Create a Consumer"
-curl -i -X POST \
-      --url ${kong_admin_url}/consumers/         \
-      --data "username=${consumerName}"          \
-      --data "custom_id=${consumerName}_id"
+consumer_id=$(createConsumer ${consumerName})
+echo "Created Consumer Id: ${consumer_id}"
 
-echo "Input consumer id (id from the previous response), followed by [ENTER]:"
-consumer_id=$(getUserInput)
-echo "consumer id is ${consumer_id}"
+sleep 2
 
+#############################################################
 echo "Enabling request-termination for Consumer ${consumerName}, consumer id: ${consumer_id}"
 curl -i -X POST \
       --url ${kong_admin_url}/plugins    \
@@ -66,7 +55,16 @@ curl -i -X POST \
       --data "config.status_code=403" \
       --data "config.message=${message}"
 
+sleep 2
 
+#############################################################
+set -x
+curl -i -X  GET \
+      --url ${kong_api_url}     \
+      --header "Host: ${hosts}"
+
+
+echo ""
 echo "Disable the backend service "
 docker stop kong-backend
 
@@ -76,11 +74,4 @@ curl -i -X  GET \
       --url ${kong_api_url}     \
       --header "Host: ${hosts}"
 
-echo "Start the backend service"
-docker start kong-backend
-
-sleep 4
-curl -i -X  GET \
-      --url ${kong_api_url}     \
-      --header "Host: ${hosts}"
 
