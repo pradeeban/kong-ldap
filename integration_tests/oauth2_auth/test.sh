@@ -1,16 +1,6 @@
 #!/usr/bin/env bash
 
-
-source ../common_functions.sh
-
-export module=oauth2
-export name=${module}_srv
-export url=${upstream_url}
-export hosts=${module}.org
-export consumerName=${module}_consumer
-export client_id=${module}_client
-export client_secret=${client_id}_secret
-export client_app_name=${module}_client
+source ./env
 
 echo "Input provision_key from the previous response, followed by [ENTER]:"
 provision_key=$(getUserInput)

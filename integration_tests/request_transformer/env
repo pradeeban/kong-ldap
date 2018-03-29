@@ -2,9 +2,8 @@
 
 source ../common_functions.sh
 
-export module=ratelimiting
-export name=${module}_api
-export url=${upstream_url}
+export module=requesttransformer
+export api_name=${module}_api
 export hosts=${module}.org
-export consumerName=${module}_consumer
-export key=${consumerName}_secret_key
+export consumer_name=${module}_consumer
+export customer_id=${module}_consumer_id

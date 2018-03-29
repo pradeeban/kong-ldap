@@ -1,23 +1,15 @@
 #!/usr/bin/env bash
 
+source ./env
 
-source ../common_functions.sh
+#############################################################
+echo "Adding Service(API): name=${name}, url=${url}"
+serviceId=$(createService ${name} ${url})
+echo "Created service Id: ${serviceId}"
 
-export module=oauth2
-export name=${module}_srv
-export url=${upstream_url}
-export hosts=${module}.org
-export consumerName=${module}_consumer
-export client_id=${module}_client
-export client_secret=${client_id}_secret
-export client_app_name=${module}_client
+sleep 3
 
-echo "Adding Service: name=${name}, url=${url}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/    \
-      --data "name=${name}"                 \
-      --data "url=${url}"
-
+#############################################################
 echo "Add OAuth2 plugin on top of a Service ${name}"
 curl -i -X POST \
       --url ${kong_admin_url}/services/${name}/plugins \
@@ -26,24 +18,28 @@ curl -i -X POST \
       --data "config.mandatory_scope=true" \
       --data "config.enable_authorization_code=true"
 
+sleep 3
+#############################################################
+
 echo "Input provision_key from the previous response, followed by [ENTER]:"
 provision_key=$(getUserInput)
+echo ${provision_key} > ./.provision_key.txt
 echo "provision_key is ${provision_key}"
 
+#############################################################
 echo "Adding Route for service:${name} with hosts: ${hosts}"
-curl -i -X POST \
-      --url ${kong_admin_url}/services/${name}/routes    \
-      --data "hosts[]=${hosts}"
+routeId=$(createRoute ${name} ${hosts})
+echo "new routId=${routeId} created"
 
+sleep 2
+
+#############################################################
 echo "Create a Consumer"
-curl -i -X POST \
-      --url ${kong_admin_url}/consumers/         \
-      --data "username=${consumerName}"          \
-      --data "custom_id=${consumerName}_id"
+consumer_id=$(createConsumer ${consumerName})
+echo "Created Consumer Id: ${consumer_id}"
 
-echo "Input consumer id (id from the previous response), followed by [ENTER]:"
-consumer_id=$(getUserInput)
-echo "consumer id is ${consumer_id}"
+sleep 2
+#############################################################
 
 echo "Create a OAuth2 Client Application for Consumer ${consumerName}, consumer id: ${consumer_id}"
 curl -i -X POST \
