@@ -14,7 +14,7 @@ source ./env
     --link kong-database:kong-database \
     --link kong-ldap:kong-ldap \
     --link kong-backend:kong-backend \
-    -e "KONG_LOG_LEVEL=debug" \
+    -e "KONG_LOG_LEVEL=info" \
     -e "KONG_DATABASE=postgres" \
     -e "KONG_PG_HOST=kong-database" \
     -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
