@@ -8,11 +8,12 @@
 
 source ./env
 
-##--link kong-ldap:kong-ldap \
+
  ## docker run -d --name kong \
  docker run  --name kong \
     --link kong-database:kong-database \
     --link kong-backend:kong-backend \
+    --link kong-ldap:kong-ldap \
     -e "KONG_LOG_LEVEL=info" \
     -e "KONG_DATABASE=postgres" \
     -e "KONG_PG_HOST=kong-database" \
