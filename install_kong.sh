@@ -12,7 +12,6 @@ source ./env
  ## docker run -d --name kong \
  docker run  --name kong \
     --link kong-database:kong-database \
-    --link kong-ldap:kong-ldap \
     --link kong-backend:kong-backend \
     -e "KONG_LOG_LEVEL=info" \
     -e "KONG_DATABASE=postgres" \

@@ -15,8 +15,8 @@ echo "Remove all kong related containers and their volumes..."
 echo "Start backend service hello world"
 ./install_backend.sh
 
-echo "Start Apache Active Directory Server................."
-./install_apacheDS.sh
+#echo "Start Apache Active Directory Server................."
+#./install_apacheDS.sh
 
 sleep 4
 
