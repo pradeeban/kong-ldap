@@ -18,8 +18,8 @@ echo "Start backend service hello world"
 #echo "Start Apache Active Directory Server................."
 #./install_apacheDS.sh
 
-echo "Start OpenDJ................."
-./install_openDJ.sh
+#echo "Start OpenDJ................."
+#./install_openDJ.sh
 
 sleep 4
 
